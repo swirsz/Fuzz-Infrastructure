@@ -142,8 +142,9 @@ RUN /root/checkout_build_install_llvm.sh
 RUN rm /root/checkout_build_install_llvm.sh
 
 COPY sbin/download.sh /opt
-RUN /opt/download.sh
-RUN rm /opt/download.sh
+RUN chmod +x /opt/download.sh && \
+    /opt/download.sh && \
+    rm /opt/download.sh
 
 WORKDIR $SRC
 
@@ -451,6 +452,8 @@ COPY sbin/none \
      sbin/announce \
      sbin/fuzz_report.patch \
      /usr/local/sbin/
+
+RUN chmod +x /usr/local/sbin/*
 
 USER hacker
 WORKDIR /home/hacker
