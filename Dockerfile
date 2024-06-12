@@ -89,6 +89,9 @@ RUN cp /opt/oss-fuzz/infra/base-images/base-builder/bazel_build_fuzz_tests \
     /opt/oss-fuzz/infra/base-images/base-builder/write_labels.py \
     /usr/local/bin/
 
+COPY sbin/compile.patch /usr/local/bin/
+RUN patch -tuN /usr/local/bin/compile -i /usr/local/bin/compile.patch -r -
+
 COPY sbin/compile_afl.patch /usr/local/bin/
 RUN patch -tuN /usr/local/bin/compile_afl -i /usr/local/bin/compile_afl.patch -r -
 

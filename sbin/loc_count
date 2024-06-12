@@ -36,6 +36,11 @@ do
 done
 
 sudo --preserve-env coverage
+if compgen -G "/out/crash*" > /dev/null; then
+    echo
+    echo "Crashes detected within the /out directory!"
+    echo
+fi
 echo
 for driver in "${DRIVERS[@]}"
 do
@@ -43,5 +48,8 @@ do
     /usr/local/sbin/loc-calc $driver
     echo
 done
+read INITIAL < /tmp/initial
+read TARGET < /tmp/target
 echo Total
 /usr/local/sbin/loc-calc
+/usr/local/sbin/announce $INITIAL $? 

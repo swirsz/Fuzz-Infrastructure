@@ -1,8 +1,7 @@
 #!/opt/pwn.college/bash
 export PROJECT_NAME=$1
-. /usr/local/sbin/e
-export SANITIZER=introspector
-sudo --preserve-env compile
+/challenge/loc
+/challenge/build introspector
 if [ "$?" -gt 0 ]; then
 	    exit 1
 fi
