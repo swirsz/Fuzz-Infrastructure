@@ -1,6 +1,38 @@
 # syntax=docker/dockerfile:1
 
-FROM pwncollege-challenge
+ARG UBUNTU_VERSION=20.04
+
+FROM ubuntu:${UBUNTU_VERSION} 
+
+USER root
+
+SHELL ["/bin/bash", "-ceov", "pipefail"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LC_CTYPE=C.UTF-8
+
+RUN <<EOF
+    rm -f /etc/apt/apt.conf.d/docker-clean
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+    (set +o pipefail; yes | unminimize)
+
+    dpkg --add-architecture i386
+
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+EOF
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && xargs apt-get install --no-install-recommends -yqq <<EOF && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+        build-essential
+        ca-certificates
+        curl
+        sudo
+        wget
+        unzip
+EOF
 
 USER root
 
@@ -120,12 +152,12 @@ COPY sbin/precompile_afl.patch /usr/local/bin/
 RUN patch -tuN /usr/local/bin/precompile_afl -i /usr/local/bin/precompile_afl.patch -r -
 RUN precompile_afl
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ARG arch=x86_64
 WORKDIR $SRC
 
 # Install newer cmake.
-ENV CMAKE_VERSION 3.24.2
+ENV CMAKE_VERSION=3.24.2
 RUN wget -q https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-$arch.sh && \
     chmod +x cmake-$CMAKE_VERSION-Linux-$arch.sh && \
     ./cmake-$CMAKE_VERSION-Linux-$arch.sh --skip-license --prefix="/usr/local" && \
@@ -448,7 +480,7 @@ COPY sbin/none \
      sbin/reports \
      sbin/fi \
      sbin/drivers \
-     sbin/loc_count \
+     sbin/loc \
      sbin/loc_count2 \
      sbin/loc_count120 \
      sbin/test-crashes \
@@ -457,6 +489,7 @@ COPY sbin/none \
      /usr/local/sbin/
 
 RUN chmod +x /usr/local/sbin/*
+RUN chmod 4755 /usr/local/sbin/loc /usr/local/sbin/fi
 
 USER hacker
 WORKDIR /home/hacker

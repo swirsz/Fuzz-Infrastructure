@@ -1,4 +1,4 @@
-#!/opt/pwn.college/bash
+#!/bin/bash
 export PROJECT_NAME=$1
 /challenge/loc
 /challenge/build introspector
