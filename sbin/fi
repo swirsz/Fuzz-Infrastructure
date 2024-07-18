@@ -21,7 +21,7 @@ do
     filename="${filename%.*}"
     sudo mv /out/report_target/$filename /out/introspector-report/inspector/covreport/$filename
 done
-zip -y /home/hacker/.log/$(TZ=US/Arizona date +"%F--%H-%M-%S")-fi /out/introspector-report/inspector/fuzz_report.html
+zip -y /home/hacker/.log/$(TZ=US/Arizona date +"%F--%H-%M-%S")-fi /out/introspector-report/inspector/fuzz_report.html /out/introspector-report/inspector/*.png
 echo
 echo View report on virtual desktop under Applications/Web Browser: http://0.0.0.0:8008/fuzz_report.html
 echo 
